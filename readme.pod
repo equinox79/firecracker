@@ -1,13 +1,23 @@
-=head1 Name
+=head1 NAME
 
-スライドのリアルタイム配信の実験
+Realtime Slide Casting Demo
 
-=head1 使い方
+=head1 How to Use
 
 $ plackup -s Twiggy -p 5000 app.psgi
 
-http://127.0.0.1:5000/firecracker/{favoritepath}
+http://127.0.0.1:5000/chat/{favoritepath}
 
+=head1 See Also
 
+This Script based on these products.
+
+miyagawa/Tatsumaki/eg/chat
+https://github.com/miyagawa/Tatsumaki/tree/master/eg/chat
+
+SlideShare API >> Player Javascript API
+http://www.slideshare.net/developers/playerapi
+
+thanks to @miyagawa and Slideshare Inc.
 
 
