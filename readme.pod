@@ -1,0 +1,13 @@
+=head1 Name
+
+スライドのリアルタイム配信の実験
+
+=head1 使い方
+
+$ plackup -s Twiggy -p 5000 app.psgi
+
+http://127.0.0.1:5000/firecracker/{favoritepath}
+
+
+
+
