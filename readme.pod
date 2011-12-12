@@ -6,7 +6,7 @@ Realtime Slide Casting Demo
 
 $ plackup -s Twiggy -p 5000 app.psgi
 
-http://127.0.0.1:5000/chat/{favoritepath}
+http://127.0.0.1:5000/chat/{chatroomname}
 
 =head1 See Also
 
