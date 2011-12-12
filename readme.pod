@@ -12,11 +12,15 @@ http://127.0.0.1:5000/chat/{favoritepath}
 
 This Script based on these products.
 
-miyagawa/Tatsumaki/eg/chat
-https://github.com/miyagawa/Tatsumaki/tree/master/eg/chat
+=over
 
-SlideShare API >> Player Javascript API
-http://www.slideshare.net/developers/playerapi
+=item miyagawa/Tatsumaki/eg/chat
+L<https://github.com/miyagawa/Tatsumaki/tree/master/eg/chat>
+
+=item SlideShare API >> Player Javascript API
+L<http://www.slideshare.net/developers/playerapi>
+
+=back
 
 thanks to @miyagawa and Slideshare Inc.
 
