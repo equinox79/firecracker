@@ -4,6 +4,8 @@ use Mouse;
 use Mouse::Util;
 extends qw/ Tatsumaki::Application /;
 
+# has container => ( is => 'rw', required => 1 );
+
 around BUILDARGS => sub {
     my $next = shift; 
     my $class = shift;
