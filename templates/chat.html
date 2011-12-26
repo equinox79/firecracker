@@ -68,6 +68,10 @@ $(function(){
                 flashMovie.jumpTo(page);
                 //updateSlideNumber();
             }
+            if( e.html.match(/slide=(.+)/) ){
+                var m = e.html.match(/slide=(.+)/); 
+                loadPlayer( m[1] );
+            }
 
         } catch(e) { if (console) console.log(e) };
     }
@@ -97,18 +101,22 @@ $(function(){
 var flashMovie;
 
 //Load the flash player. Properties for the player can be changed here.
-function loadPlayer() {
+function loadPlayer( doc ) {
     //allowScriptAccess from other domains
     var params = { allowScriptAccess: "always" };
     var atts = { id: "player" };
 
+    if ( ! doc ) {
+        doc = "thirst-upload-800x600-1215534320518707-8";
+    }
+
     //doc: The path of the file to be used
     //startSlide: The number of the slide to start from
     //rel: Whether to show a screen with related slideshows at the end or not. 0 means false and 1 is true..
-    var flashvars = { doc : "thirst-upload-800x600-1215534320518707-8", startSlide : 1, rel : 0 };
+    var flashvars = { doc : doc, startSlide : 1, rel : 0 };
 
     //Generate the embed SWF file
-    swfobject.embedSWF("http://static.slidesharecdn.com/swf/ssplayer2.swf", "player", "400", "300", "8", null, flashvars, params, atts);
+    swfobject.embedSWF("http://static.slidesharecdn.com/swf/ssplayer2.swf", "player", "800", "600", "8", null, flashvars, params, atts);
 
     //Get a reference to the player
     flashMovie = document.getElementById("player");
@@ -125,6 +133,17 @@ function updateSlideNumber(){
     $('#ident').val('system');
     $('#chat').val('p.' + flashMovie.getCurrentSlide());
     doPost($('#ident'), $('#chat'));
+}
+
+//Load new slide
+function loadSlide ( chn, url ) {
+    $.ajax( {
+        url: "/chat/" + chn + "/slide",
+        data: { url: url },
+        type: 'post',
+        dataType: 'json',
+        success: function(r) { }
+    } );
 }
 </script>
 
@@ -179,6 +198,11 @@ td {
         <input type="text" id="slidenumber" size="2" value="1" onkeydown="if (event.keyCode == 13) { jumpTo(); }"/>
         <button onclick="flashMovie.next();updateSlideNumber();" type="button" value="Next">Next</button>
         <button onclick="flashMovie.last();updateSlideNumber();" type="button" value="Last">Last</button>
+        <br>
+    </div>
+    <div id="scraper" style="clear: both;">
+        Your Slides URL on SlideShare: <input type="text" id="slideurl" name="slideurl" />
+        <input type="button" value="Load" onclick="loadSlide('<%= $channel %>', $('#slideurl').val());">
     </div>
 
     </td>

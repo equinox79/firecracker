@@ -3,8 +3,7 @@ package FireCracker::Application;
 use Mouse;
 use Mouse::Util;
 extends qw/ Tatsumaki::Application /;
-
-has container => ( is => 'rw' );
+with qw/ FireCracker::Trait::WithContainer /;
 
 around BUILDARGS => sub {
     my $next = shift; 
