@@ -6,8 +6,6 @@ use Tatsumaki::Error;
 use Tatsumaki::Application;
 use Time::HiRes;
 
-use Data::Dumper;
-
 use base qw(Tatsumaki::Handler);
 use HTML::Entities;
 use Encode;
