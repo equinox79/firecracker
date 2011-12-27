@@ -30,6 +30,7 @@ sub format_message {
     $text =~ s{ (https?://\S+) | ([&<>"']+) }
               { $1 ? do { my $url = HTML::Entities::encode($1); qq(<a target="_blank" href="$url">$url</a>) } :
                 $2 ? HTML::Entities::encode($2) : '' }egx;
+    $text = Encode::decode_utf8( $text );
     $text;
 }
 
