@@ -49,6 +49,7 @@ $(function(){
             var message = $('<td/>').addClass('chat-message');
             if (e.text) message.text(e.text);
             if (e.html) message.html(e.html);
+
             message.find('a').oembed(null, { embedMethod: "append", maxWidth: 500 });
             var name = e.name || (e.ident ? e.ident.split('@')[0] : null);
             if (name)
@@ -61,16 +62,22 @@ $(function(){
                 ' from ' + e.address + ')'
             );
             $('.pretty-time', meta).prettyDate();
-            $('#messages').prepend($('<tr/>').addClass('message').append(avatar).append(message).append(meta));
+
+            if ( e.ident != 'system'  ) {
+                $('#messages').prepend($('<tr/>').addClass('message').append(avatar).append(message).append(meta));
+            }
             
             if(e.html.match(/p\.[0-9]{1,}/)){
                 var page = e.html.split(".")[1];
                 flashMovie.jumpTo(page);
                 //updateSlideNumber();
             }
-            if( e.html.match(/slide=(.+)/) ){
-                var m = e.html.match(/slide=(.+)/); 
+            if ( e.html.match( /^doc=(.+),title=(.+),author=(.+),description=(.+)$/ ) ) {
+                var m = e.html.match( /^doc=(.+),title=(.+),author=(.+),description=(.+)$/ );
                 loadPlayer( m[1] );
+                $('#slide_title').text( m[2] );
+                $('#slide_author').text( m[3] );
+                $('#slide_description').text( m[4] );
             }
 
         } catch(e) { if (console) console.log(e) };
@@ -102,6 +109,9 @@ var flashMovie;
 
 //Load the flash player. Properties for the player can be changed here.
 function loadPlayer( doc ) {
+    //clear old flash-player objects
+    $('#player').html('');
+
     //allowScriptAccess from other domains
     var params = { allowScriptAccess: "always" };
     var atts = { id: "player" };
@@ -137,13 +147,23 @@ function updateSlideNumber(){
 
 //Load new slide
 function loadSlide ( chn, url ) {
-    $.ajax( {
-        url: "/chat/" + chn + "/slide",
-        data: { url: url },
-        type: 'post',
-        dataType: 'json',
-        success: function(r) { }
-    } );
+    if ( url ) {
+        $('#scraper').hide();
+        $('#loading').show();
+        $.ajax( {
+            url: "/chat/" + chn + "/slide",
+            data: { url: url },
+            type: 'post',
+            dataType: 'json',
+            success: function(r) { 
+                $('#loading').hide();
+                $('#scraper').show();
+            }
+        } );
+    }
+    else {
+        alert('Slide-URL is empty...');
+    }
 }
 </script>
 
@@ -153,6 +173,33 @@ function loadSlide ( chn, url ) {
     margin-top: 1em;
     margin-right: 3em;
     width: 100%;
+}
+#messages_container {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #999;
+    height: 500px;
+    overflow-y: scroll;
+}
+#chat_form_container {
+    margin: 4px;
+}
+#title_container {
+    color: #999;
+    font-weight: 900;
+}
+#slide_author {
+    margin: 0px;
+    display: inline;
+    font-size: 0.6em;
+}
+#slide_description {
+    color: #ffe;
+    font-size: 1.0em;
+    margin: 0px 0px 6px 6px;
+}
+#right {
+    vertical-align: top;
 }
 .avatar {
     width: 25px;
@@ -174,52 +221,71 @@ function loadSlide ( chn, url ) {
     color: #888;
     font-size: 0.8em;
 }
+.chat-room-name {
+    color: #999;
+    font-size: 1.6em;
+    font-weight: 900;
+}
+.floating {
+    float: left;
+}
 body {
-    margin: 1em 2em
+    background-color: #333;
+    color: #ffe;
+    margin: 1em 2em;
 }
-td {
-    border : solid 1px orange;
+a {
+    color: #cf9;
 }
-
+a:hover {
+    color: #fc9;
+}
 </style>
 </head>
 
 <body onload="loadPlayer();">
-<table>
-<tr>
-    <td style="width:800px;vertical-align:top;">
-    <div id="player">
-        You need Flash player 8+ and JavaScript enabled to view this video.
-    </div>
-    <div style="margin-left: 150px; margin-top: 10px;">
-        <button onclick="flashMovie.first();updateSlideNumber();" type="button" value="First">First</button>
-        <button onclick="flashMovie.previous();updateSlideNumber();" type="button" value="Previous">Previous</button>
-        <button onclick="jumpTo();updateSlideNumber();" type="button" value="Go to">Go to</button>
-        <input type="text" id="slidenumber" size="2" value="1" onkeydown="if (event.keyCode == 13) { jumpTo(); }"/>
-        <button onclick="flashMovie.next();updateSlideNumber();" type="button" value="Next">Next</button>
-        <button onclick="flashMovie.last();updateSlideNumber();" type="button" value="Last">Last</button>
-        <br>
-    </div>
-    <div id="scraper" style="clear: both;">
-        Your Slides URL on SlideShare: <input type="text" id="slideurl" name="slideurl" />
-        <input type="button" value="Load" onclick="loadSlide('<%= $channel %>', $('#slideurl').val());">
-    </div>
 
-    </td>
-    <td style="">
-        <h1 class="chat-room-name">Chat room: <%= $channel %></h1>
-        <!-- move this input out of form so Firefox can submit with enter key :/ -->
-        Your email (for Gravatar): <input id="ident" type="text" name="ident" size="24"/>
-        <form onsubmit="doPost($('#ident'), $('#chat')); return false">
-            Something to say: <input id="chat" type="text" size="48"/>
-        </form>
-        <div style="height:500px;overflow-y:scroll;">
-            <table id="messages"> </table>
-        </div>
-    </td>
-</tr>
+<table>
+    <tr>
+        <td id="left" style="width:800px;vertical-align:top;">
+            <h1 id="title_container"><span id="slide_title">title</span> <address id="slide_author">author</address></h1>
+            <h3 id="slide_description">description</h3>
+            <div id="player">
+                You need Flash player 8+ and JavaScript enabled to view this video.
+            </div>
+            <div style="margin-left: 150px; margin-top: 10px;">
+                <button onclick="flashMovie.first();updateSlideNumber();" type="button" value="First">First</button>
+                <button onclick="flashMovie.previous();updateSlideNumber();" type="button" value="Previous">Previous</button>
+                <button onclick="flashMovie.next();updateSlideNumber();" type="button" value="Next">Next</button>
+                <button onclick="flashMovie.last();updateSlideNumber();" type="button" value="Last">Last</button>
+                <button onclick="jumpTo();updateSlideNumber();" type="button" value="Go to">Go to</button>
+                <input class="floating" style="margin-right:10px;" type="text" id="slidenumber" size="2" value="1" onkeydown="if (event.keyCode == 13) { jumpTo(); }"/>
+                <br>
+            </div>
+            <div id="scraper" style="clear: both;">
+                Your Slides URL on SlideShare: <input style="width:400px;" type="text" id="slideurl" name="slideurl" />
+                <input id="slide_load_button" type="button" value="Load" onclick="loadSlide('<%= $channel %>', $('#slideurl').val());">
+            </div>
+            <div id="loading" style="clear: both; display: none;"> Just a moment, please ... </div>
+        </td>
+    
+        <td id="right">
+            <h1 class="chat-room-name">Chat room: <%= $channel %></h1>
+            <!-- move this input out of form so Firefox can submit with enter key :/ -->
+            <div id="chat_form_container">
+                Your email (for Gravatar): <input id="ident" type="text" name="ident" size="24"/>
+                <form onsubmit="doPost($('#ident'), $('#chat')); return false">
+                    Something to say: <input id="chat" type="text" size="48"/>
+                </form>
+            </div>
+            <div id="messages_container">
+                <table id="messages"> </table>
+            </div>
+        </td>
+    </tr>
 </table>
-<div id="footer">Powered by <a href="http://github.com/miyagawa/Tatsumaki">Tatsumaki/<%= $Tatsumaki::VERSION %></a>.</div>
+
+<div>Powered by <a href="http://github.com/miyagawa/Tatsumaki">Tatsumaki/<%= $Tatsumaki::VERSION %></a>.</div>
 
 </body>
 </html>

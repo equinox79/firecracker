@@ -13,26 +13,35 @@ use Encode;
 sub post {
     my($self, $channel) = @_;
     my $v = $self->request->parameters;
-    my $html = $self->build_html( $v );
-    my $mq = Tatsumaki::MessageQueue->instance($channel);
-    $mq->publish({
-        type => "message", 
-        html => $html, 
-        address => $self->request->address,
-        time => scalar Time::HiRes::gettimeofday,
-    });
+    $self->publish( $channel, $self->build_msg( $v ) );
     $self->write({ success => 1 });
 }
 
-sub build_html {
+sub build_msg {
     my ( $self, $param ) = @_;
     my $url = $param->get('url');
     my $agent = $self->application->get( 'Furl' );
     my $res = $agent->get( $url );
     die "$url replies $res->code" unless $res->is_success;
     my $scraper = $self->application->get( 'API::SlideScrape' );
-    my $doc = $scraper->( $res->content );
-    return "slide=$doc";
+    my $data = $scraper->( $res->content );
+    my @rtn;
+    for my $key ( qw( doc title author description ) ) { 
+        push @rtn, sprintf( "$key=%s", $data->{$key} );
+    }
+    return Encode::decode_utf8( join ",", @rtn );
+}
+
+sub publish {
+    my ( $self, $channel, $str ) = @_;
+    my $mq = Tatsumaki::MessageQueue->instance($channel);
+    $mq->publish({
+        type => "message", 
+        html => $str, 
+        ident => 'system',
+        address => $self->request->address,
+        time => scalar Time::HiRes::gettimeofday,
+    });
 }
 
 1;
