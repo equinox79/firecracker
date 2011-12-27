@@ -1,0 +1,93 @@
+#messages {
+    margin-top: 1em;
+    margin-right: 3em;
+    width: 100%;
+}
+#messages_container {
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #999;
+    height: 500px;
+    overflow-y: scroll;
+}
+#chat_form_container {
+    margin: 4px;
+}
+#title_container {
+    color: #999;
+    font-weight: 900;
+}
+#slide_author {
+    margin: 0px;
+    display: inline;
+    font-size: 0.6em;
+}
+#slide_description {
+    color: #ffe;
+    font-size: 1.0em;
+    margin: 0px 0px 6px 6px;
+}
+#right {
+    vertical-align: top;
+}
+.avatar {
+    width: 25px;
+    vertical-align: top;
+}
+.avatar img {
+    width: 25px; height: 25px;
+    vertical-align: top;
+    margin-right: 0.5em;
+}
+.chat-message {
+    width: 70%;
+}
+.chat-message .name {
+    font-weight: bold;
+}
+.meta {
+    vertical-align: top;
+    color: #888;
+    font-size: 0.6em;
+}
+.chat-room-name {
+    color: #999;
+    font-size: 1.6em;
+    font-weight: 900;
+}
+.floating {
+    float: left;
+}
+body {
+    background-color: #333;
+    color: #ffe;
+    margin: 1em 2em;
+}
+a {
+    color: #cf9;
+}
+a:hover {
+    color: #fc9;
+}
+h1.title {
+    color: #ccc;
+    font-size: 6.0em;
+    font-weight: 900;
+    text-shadow: 3px 3px 3px #000;
+    margin-right: 20px;
+}
+div#main {
+    width: 600px;
+    height: auto;
+    margin: auto;
+    margin-top: 80px;
+    border-radius: 30px;
+    padding: 30px;
+    background-color: #666;
+    text-align: center;
+}
+div.footer {
+    margin-top: 0.5em;
+    text-align: center;
+}
+
