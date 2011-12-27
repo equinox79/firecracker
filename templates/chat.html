@@ -153,9 +153,8 @@ function jumpTo(){
 //Update the slide number in the field for the same
 function updateSlideNumber(){
     document.getElementById("slidenumber").value = flashMovie.getCurrentSlide();
-    $('#ident').val('system');
     $('#chat').val('p.' + flashMovie.getCurrentSlide());
-    doPost($('#ident'), $('#chat'));
+    doPost($('#ident_system'), $('#chat'));
 }
 
 //Load new slide
@@ -220,6 +219,7 @@ function loadSlide ( chn, url ) {
             <!-- move this input out of form so Firefox can submit with enter key :/ -->
             <div id="chat_form_container">
                 Your email (for Gravatar) or Twitter account(with"@"): <input id="ident" type="text" name="ident" size="24"/>
+                <input id="ident_system" type="hidden" name="ident" value="system"/>
                 <form onsubmit="doPost($('#ident'), $('#chat')); return false">
                     Something to say: <input id="chat" type="text" size="48"/>
                 </form>
