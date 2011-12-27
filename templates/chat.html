@@ -38,10 +38,23 @@ $(function(){
     var onNewEvent = function(e) {
         try {
             var src    = e.avatar || ("http://www.gravatar.com/avatar/" + $.md5(e.ident || 'foo'));
+            if ( e.ident ) {
+                if ( e.ident.match(/^@/) ) {
+                    var m = e.ident.match(/^@(.+)$/);
+                    e.name = m[1];
+                    src = "http://api.twitter.com/1/users/profile_image/"+ e.name;
+                }
+            }
             var name   = e.name   || e.ident || 'Anonymous';
             var avatar = $('<img/>').attr('src', src).attr('alt', name);
             if (e.ident) {
-                var link = e.ident.match(/https?:/) ? e.ident : 'mailto:' + e.ident;
+                var link;
+                if ( e.ident.match(/^@/) ) {
+                    link = 'http://twitter.com/' + name;
+                }
+                else {
+                    link = e.ident.match(/https?:/) ? e.ident : 'mailto:' + e.ident;
+                }
                 avatar = $('<a/>').attr('href', link).attr('target', '_blank').append(avatar);
             }
             avatar = $('<td/>').addClass('avatar').append(avatar);
@@ -158,6 +171,11 @@ function loadSlide ( chn, url ) {
             success: function(r) { 
                 $('#loading').hide();
                 $('#scraper').show();
+            },
+            error: function(r) {
+                alert( 'error when loading' );
+                $('#loading').hide();
+                $('#scraper').show();
             }
         } );
     }
@@ -219,7 +237,7 @@ function loadSlide ( chn, url ) {
 .meta {
     vertical-align: top;
     color: #888;
-    font-size: 0.8em;
+    font-size: 0.6em;
 }
 .chat-room-name {
     color: #999;
@@ -273,7 +291,7 @@ a:hover {
             <h1 class="chat-room-name">Chat room: <%= $channel %></h1>
             <!-- move this input out of form so Firefox can submit with enter key :/ -->
             <div id="chat_form_container">
-                Your email (for Gravatar): <input id="ident" type="text" name="ident" size="24"/>
+                Your email (for Gravatar) or Twitter account(with"@"): <input id="ident" type="text" name="ident" size="24"/>
                 <form onsubmit="doPost($('#ident'), $('#chat')); return false">
                     Something to say: <input id="chat" type="text" size="48"/>
                 </form>
