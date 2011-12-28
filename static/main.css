@@ -90,4 +90,7 @@ div.footer {
     margin-top: 0.5em;
     text-align: center;
 }
-
+#key_input {
+    width: 18px;
+    display: inline;
+}
