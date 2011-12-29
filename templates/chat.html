@@ -35,6 +35,34 @@ function doPost(el1, el) {
 }
 
 $(function(){
+
+    $("td#left").mouseover( function () {
+        $("#key_input").focus();
+    } );
+    $("#key_input").focus( function () {
+        $("#key_input_status").text('Enabled');
+    } );
+    $("#key_input").blur( function () {
+        $("#key_input_status").text('Disabled');
+    } );
+    $("#key_input").keydown( function ( e ) {
+        $("#key_input").val('');
+        switch ( e.keyCode ) {
+            case 74 :
+                $("#btn_prev").click();
+		break;
+            case 75 :
+                $("#btn_next").click();
+                break;
+            case 72 :
+                $("#btn_first").click();
+                break;
+            case 76 :
+                $("#btn_last").click();
+                break;
+        }
+    } );
+
     var onNewEvent = function(e) {
         try {
             var src    = e.avatar || ("http://www.gravatar.com/avatar/" + $.md5(e.ident || 'foo'));
@@ -71,8 +99,8 @@ $(function(){
             var date = new Date(e.time * 1000);
             var meta = $('<td/>').addClass('meta').append(
                 '(' +
-                '<span class="pretty-time" title="' + date.toUTCString() + '">' + date.toDateString() + '</span>' +
-                ' from ' + e.address + ')'
+                '<span class="pretty-time" title="' + date.toUTCString() + '">' + date.toDateString() + '</span>' + 
+                ')'
             );
             $('.pretty-time', meta).prettyDate();
 
@@ -199,10 +227,10 @@ function loadSlide ( chn, url ) {
                 You need Flash player 8+ and JavaScript enabled to view this video.
             </div>
             <div style="margin-left: 150px; margin-top: 10px;">
-                <button onclick="flashMovie.first();updateSlideNumber();" type="button" value="First">First</button>
-                <button onclick="flashMovie.previous();updateSlideNumber();" type="button" value="Previous">Previous</button>
-                <button onclick="flashMovie.next();updateSlideNumber();" type="button" value="Next">Next</button>
-                <button onclick="flashMovie.last();updateSlideNumber();" type="button" value="Last">Last</button>
+                <button id="btn_first" onclick="flashMovie.first();updateSlideNumber();" type="button" value="First">First[H]</button>
+                <button id="btn_prev" onclick="flashMovie.previous();updateSlideNumber();" type="button" value="Previous">Previous[J]</button>
+                <button id="btn_next" onclick="flashMovie.next();updateSlideNumber();" type="button" value="Next">Next[K]</button>
+                <button id="btn_last" onclick="flashMovie.last();updateSlideNumber();" type="button" value="Last">Last[L]</button>
                 <button onclick="jumpTo();updateSlideNumber();" type="button" value="Go to">Go to</button>
                 <input class="floating" style="margin-right:10px;" type="text" id="slidenumber" size="2" value="1" onkeydown="if (event.keyCode == 13) { jumpTo(); }"/>
                 <br>
@@ -223,6 +251,10 @@ function loadSlide ( chn, url ) {
                 <form onsubmit="doPost($('#ident'), $('#chat')); return false">
                     Something to say: <input id="chat" type="text" size="48"/>
                 </form>
+            </div>
+            <div id="keyboard_controll_container">
+                Keyboard Shortcut: <span id="key_input_status">Disabled</span>
+                <input id="key_input" type="text" size="1"/>
             </div>
             <div id="messages_container">
                 <table id="messages"> </table>
